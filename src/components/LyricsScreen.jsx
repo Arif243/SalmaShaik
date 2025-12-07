@@ -10,56 +10,47 @@ import { TextAnimate } from "./ui/text-animate";
 const lyrics = [
   { text: "When all I dream of is your eyes", duration: 4800, anim: 2.5 },
   { text: "All I long for is your touch", duration: 3800, anim: 1.5 },
-  {
-    text: "And, darlin', something tells me that's enough",
-    duration: 6300,
-    anim: 2.2,
-  },
+  { text: "And, darlin', something tells me that's enough", duration: 6300, anim: 2.2 },
   { text: "You can say that I'm a fool", duration: 3600, anim: 1.8 },
   { text: "And I don't know very much", duration: 3400, anim: 1.8 },
   { text: "But I think they call this love", duration: 6000, anim: 2.2 },
 ];
 
-export default function LyricsScreen({ onComplete }) {
+export default function LyricsScreen() {
   const [currentLyricIndex, setCurrentLyricIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
 
   useEffect(() => {
-    if (!isAnimating) return;
-
     const currentDuration = lyrics[currentLyricIndex].duration;
 
     const timer = setTimeout(() => {
       if (currentLyricIndex < lyrics.length - 1) {
         setCurrentLyricIndex((prev) => prev + 1);
       } else {
-        setIsAnimating(false);
-        onComplete();
+        // last line reached – stay on screen, do nothing
       }
     }, currentDuration);
 
     return () => clearTimeout(timer);
-  }, [isAnimating, currentLyricIndex, onComplete]);
+  }, [currentLyricIndex]);
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center">
-      {/* ✅ Background image with your eyes */}
+    <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden">
+      {/* FULL-SCREEN BACKGROUND IMAGE */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/publiceyes-bg.png" // <- your image in /public
+          src="/eyes-bg.png"   // <-- your image name in /public
           alt="Background"
           fill
           className="object-cover"
           priority
         />
-        {/* Dark overlay so text is readable */}
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
-      {/* Lyrics container on top of image */}
-      <div className="w-full max-w-2xl lg:max-w-3xl flex flex-col items-center justify-center relative">
+      {/* LYRICS ON TOP */}
+      <div className="w-full max-w-2xl lg:max-w-3xl flex flex-col items-center justify-center relative px-4">
         <AnimatePresence mode="wait">
-          {isAnimating && currentLyricIndex < lyrics.length && (
+          {currentLyricIndex < lyrics.length && (
             <motion.div
               key={currentLyricIndex}
               initial={{ opacity: 0, y: 10, scale: 0.97 }}
@@ -106,3 +97,4 @@ export default function LyricsScreen({ onComplete }) {
     </div>
   );
 }
+
