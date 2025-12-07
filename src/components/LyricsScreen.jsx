@@ -10,7 +10,11 @@ import { TextAnimate } from "./ui/text-animate";
 const lyrics = [
   { text: "When all I dream of is your eyes", duration: 4800, anim: 2.5 },
   { text: "All I long for is your touch", duration: 3800, anim: 1.5 },
-  { text: "And, darlin', something tells me that's enough", duration: 6300, anim: 2.2 },
+  {
+    text: "And, darlin', something tells me that's enough",
+    duration: 6300,
+    anim: 2.2,
+  },
   { text: "You can say that I'm a fool", duration: 3600, anim: 1.8 },
   { text: "And I don't know very much", duration: 3400, anim: 1.8 },
   { text: "But I think they call this love", duration: 6000, anim: 2.2 },
@@ -26,7 +30,7 @@ export default function LyricsScreen({ onComplete }) {
       if (currentLyricIndex < lyrics.length - 1) {
         setCurrentLyricIndex((prev) => prev + 1);
       } else {
-        // 👉 when last line finishes, go to OutroScreen
+        // when lyrics finish -> go to outro screen
         if (onComplete) onComplete();
       }
     }, currentDuration);
@@ -36,21 +40,23 @@ export default function LyricsScreen({ onComplete }) {
 
   return (
     <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black">
-      {/* 🖼 FULL PORTRAIT IMAGE — NO CROPPING */}
+      {/* FULL IMAGE BACKGROUND */}
       <div className="absolute inset-0 -z-10 flex items-center justify-center">
         <Image
-          src="/publiceyes-bg.png"   // make sure this file is in /public
-          alt="Background"
+          src="/publiceyes-bg.png"      // <-- the file in /public
+          alt="Salma"
           fill
           className="object-contain bg-black"
           priority
         />
+        {/* If the image appears sideways, try adding: className="object-contain bg-black rotate-90"
+            or className="object-contain bg-black -rotate-90" */}
       </div>
 
-      {/* DARK OVERLAY FOR READABILITY */}
-      <div className="absolute inset-0 bg-black/40 -z-10" />
+      {/* Dark overlay for better text contrast */}
+      <div className="absolute inset-0 bg-black/35 -z-10" />
 
-      {/* LYRICS CENTERED ON SCREEN */}
+      {/* LYRICS */}
       <div className="absolute inset-0 flex items-center justify-center px-4 text-center">
         <AnimatePresence mode="wait">
           {currentLyricIndex < lyrics.length && (
@@ -76,5 +82,3 @@ export default function LyricsScreen({ onComplete }) {
     </div>
   );
 }
-
-
