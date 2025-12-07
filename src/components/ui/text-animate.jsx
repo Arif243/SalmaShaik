@@ -3,7 +3,10 @@
 import { memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { cn } from "@/lib/utils";
+function cn(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
+
 
 const staggerTimings = {
   text: 0.06,
