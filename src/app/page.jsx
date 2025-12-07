@@ -31,7 +31,8 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen items-center justify-center relative px-4 py-8 overflow-hidden">
-      <Background />
+      {/* 🚫 No background when lyrics screen is active */}
+      {currentScreen === "lyrics" ? null : <Background />}
 
       <AnimatePresence mode="wait">
         <motion.div
@@ -47,7 +48,6 @@ export default function Home() {
 
       {musicStarted && <Music shouldPlay={musicStarted} />}
 
-      {/* Watermark */}
       <motion.div
         initial={{ x: 100, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
@@ -56,7 +56,7 @@ export default function Home() {
         }}
         className="fixed bottom-4 right-4 text-sm text-white/30 pointer-events-none z-50 font-light"
       >
-        @Arif
+        @ArifShaik
       </motion.div>
     </div>
   );
