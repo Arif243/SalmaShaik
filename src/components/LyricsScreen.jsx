@@ -1,84 +1,91 @@
-"use client";
+"use client"
 
-export const dynamic = "force-static";
+export const dynamic = "force-static"
 
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { TextAnimate } from "./ui/text-animate";
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { TextAnimate } from "./ui/text-animate"
 
 const lyrics = [
-  { text: "When all I dream of is your eyes", duration: 4800, anim: 2.5 },
-  { text: "All I long for is your touch", duration: 3800, anim: 1.5 },
-  {
-    text: "And, darlin', something tells me that's enough",
-    duration: 6300,
-    anim: 2.2,
-  },
-  { text: "You can say that I'm a fool", duration: 3600, anim: 1.8 },
-  { text: "And I don't know very much", duration: 3400, anim: 1.8 },
-  { text: "But I think they call this love", duration: 6000, anim: 2.2 },
-];
+    { text: "When all I dream of is your eyes", duration: 4800, anim: 2.5 },
+    { text: "All I long for is your touch", duration: 3800, anim: 1.5 },
+    { text: "And, darlin', something tells me that's enough", duration: 6300, anim: 2.2 },
+    { text: "You can say that I'm a fool", duration: 3600, anim: 1.8 },
+    { text: "And I don't know very much", duration: 3400, anim: 1.8 },
+    { text: "But I think they call this love", duration: 6000, anim: 2.2 },
+]
+
 
 export default function LyricsScreen({ onComplete }) {
-  const [currentLyricIndex, setCurrentLyricIndex] = useState(0);
+    const [currentLyricIndex, setCurrentLyricIndex] = useState(0)
+    const [isAnimating, setIsAnimating] = useState(true)
 
-  useEffect(() => {
-    const currentDuration = lyrics[currentLyricIndex].duration;
+    useEffect(() => {
+        if (!isAnimating) return
 
-    const timer = setTimeout(() => {
-      if (currentLyricIndex < lyrics.length - 1) {
-        setCurrentLyricIndex((prev) => prev + 1);
-      } else {
-        // when lyrics finish -> go to outro screen
-        if (onComplete) onComplete();
-      }
-    }, currentDuration);
+        const currentDuration = lyrics[currentLyricIndex].duration
 
-    return () => clearTimeout(timer);
-  }, [currentLyricIndex, onComplete]);
+        const timer = setTimeout(() => {
+            if (currentLyricIndex < lyrics.length - 1) {
+                setCurrentLyricIndex(prev => prev + 1)
+            } else {
+                setIsAnimating(false)
+                onComplete()
 
-  return (
-    <div className="relative w-full min-h-screen flex items-center justify-center overflow-hidden bg-black">
-      {/* FULL IMAGE BACKGROUND */}
-      <div className="absolute inset-0 -z-10 flex items-center justify-center">
-        <Image
-          src="/publiceyes-bg.png"      // <-- the file in /public
-          alt="Salma"
-          fill
-          className="object-contain bg-black"
-          priority
-        />
-        {/* If the image appears sideways, try adding: className="object-contain bg-black rotate-90"
-            or className="object-contain bg-black -rotate-90" */}
-      </div>
+            }
+        }, currentDuration)
 
-      {/* Dark overlay for better text contrast */}
-      <div className="absolute inset-0 bg-black/35 -z-10" />
+        return () => clearTimeout(timer)
+    }, [isAnimating, currentLyricIndex, onComplete])
 
-      {/* LYRICS */}
-      <div className="absolute inset-0 flex items-center justify-center px-4 text-center">
-        <AnimatePresence mode="wait">
-          {currentLyricIndex < lyrics.length && (
-            <motion.div
-              key={currentLyricIndex}
-              initial={{ opacity: 0, y: 10, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.97 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
-            >
-              <TextAnimate
-                by="word"
-                duration={lyrics[currentLyricIndex].anim}
-                animation="blurInUp"
-                className="text-3xl md:text-5xl lg:text-6xl text-white drop-shadow-[0_0_15px_rgba(0,0,0,0.7)] leading-normal"
-              >
-                {lyrics[currentLyricIndex].text}
-              </TextAnimate>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </div>
-  );
+
+    return (
+        <div className="w-full max-w-2xl lg:max-w-3xl flex flex-col items-center justify-center relative">
+            <AnimatePresence mode="wait">
+                {isAnimating && currentLyricIndex < lyrics.length && (
+                    <motion.div
+                        key={currentLyricIndex}
+                        initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -10, scale: 0.97 }}
+                        transition={{ duration: 0.6, ease: "easeInOut" }}
+                        className="text-center"
+                    >
+                        {currentLyricIndex === 0 ? (
+                            <div className="flex flex-wrap justify-center items-center gap-x-3">
+                                <TextAnimate
+                                    by="word"
+                                    duration={2.4}
+                                    animation="blurInUp"
+                                    className="text-3xl md:text-5xl lg:text-6xl text-foreground drop-shadow-[0_0_10px_rgba(155,77,255,0.35)]"
+                                >
+                                    When
+                                </TextAnimate>
+
+                                <TextAnimate
+                                    by="word"
+                                    duration={2.2}
+                                    delay={1.8}
+                                    animation="blurInUp"
+                                    className="text-3xl md:text-5xl lg:text-6xl text-foreground drop-shadow-[0_0_10px_rgba(155,77,255,0.35)] text-balance leading-normal"
+                                >
+                                    all I dream of is your eyes
+                                </TextAnimate>
+                            </div>
+                        ) : (
+                            <TextAnimate
+                                by="word"
+                                duration={lyrics[currentLyricIndex].anim}
+                                animation="blurInUp"
+                                className="text-3xl md:text-5xl lg:text-6xl text-foreground drop-shadow-[0_0_10px_rgba(155,77,255,0.35)] text-balance leading-normal"
+                            >
+                                {lyrics[currentLyricIndex].text}
+                            </TextAnimate>
+                        )}
+
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    )
 }
